@@ -7,6 +7,8 @@ const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
 
+const PORT = process.argv.PORT || 3000;
+
 let app = express();
 
 app.use(bodyParser.json());
@@ -55,11 +57,11 @@ app.get('/todos/:id', (req, res) => {
       return res.status(404).send('todo not found');
     }
 
-    res.send(todo);
+    res.send({todo});
   }).catch(e => res.status(400).send({text: 'error fetching', e}));
 });
 
-app.listen(3000, () => {
-  console.log('Server is up on port 3000');
+app.listen(PORT, () => {
+  console.log(`Server is up on port ${PORT}`);
 });
 module.exports.app = app;

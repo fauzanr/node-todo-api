@@ -1,20 +1,24 @@
 const request = require('supertest');
 const expect = require('expect');
+const {ObjectId} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 const todos = [
   {
-    text: 'somethind to do'
+    _id: new ObjectId(),
+    text: 'something to do'
   },
   {
+    _id: new ObjectId(),
     text: 'something to do too'
   },
   {
+    _id: new ObjectId(),
     text: 'something to do also'
   }
-]
+];
 
 beforeEach(done => {
   Todo.deleteMany({}).then(() => {
@@ -73,6 +77,33 @@ describe('POST /todos', () => {
       .expect(res => {
         expect(res.body.todos.length).toBe(todos.length);
       }, e => done(e))
+      .end(done);
+  });
+});
+
+describe('POST /todos/:id', () => {
+  it(`should return todo doc`, done => {
+    request(app)
+      .get(`/todos/${todos[2]._id.toHexString()}`)
+      .expect(200)
+      .expect(res => {
+        expect(res.body.todo.text).toBe(todos[2].text);
+      })
+      .end(done);
+  });
+
+  it('should return 404 if todo not found', done => {
+    let dummyId = new ObjectId().toHexString();
+    request(app)
+      .get(`/todos/${dummyId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-objectids', done => {
+    request(app)
+      .get(`/todos/213`)
+      .expect(404)
       .end(done);
   });
 });
