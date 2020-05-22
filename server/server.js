@@ -13,6 +13,10 @@ let app = express();
 
 app.use(bodyParser.json());
 
+app.get('/', (req, res) => {
+  res.send('Hello world!');
+});
+
 app.post('/todos', (req, res) => {
   let todo = new Todo({
     text: req.body.text
