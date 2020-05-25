@@ -27,10 +27,16 @@ const userId = '5ec2be43e04626420ce73505';
 //   console.log('todo', todo);
 // }).catch(e => console.log(e));
 
-User.findById(userId).then(user => {
-  if(!user) {
-    return console.log('ID not found');
-  }
+// User.findById(userId).then(user => {
+//   if(!user) {
+//     return console.log('ID not found');
+//   }
 
-  console.log('user', user);
-}).catch(e => console.log(e));
+//   console.log('user', user);
+// }).catch(e => console.log(e));
+
+// Todo.findOneAndDelete
+// Todo.remove()
+// Todo.findByIdAndDelete('5ec6cb12b454653524fa1ef5').then(todo => {
+//   console.log(todo);  
+// });
