@@ -8,3 +8,7 @@ if (env === 'development' || env === 'test') {
     process.env[key] = envConfig[key];
   });
 }
+
+console.log(env);
+console.log(process.env.MONGODB_URI);
+console.log(process.env.JWT_SECRET);

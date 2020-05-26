@@ -2,7 +2,6 @@ require('./config/config');
 
 const _ = require('lodash');
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const {ObjectId} = require('mongodb');
 
 
