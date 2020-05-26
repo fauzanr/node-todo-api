@@ -40,6 +40,28 @@ UserSchema.methods.toJSON = function () {
   return _.pick(userObject, ['_id', 'email']);
 }
 
+UserSchema.methods.generateAuthToken = function () {
+  let user = this;
+  let access = 'auth';
+  let token = jwt.sign({ _id: user.id, access }, 'abc123').toString();
+
+  user.tokens = user.tokens.concat([{access, token}]);
+
+  return user.save().then(() => {
+    return token;
+  });
+};
+
+UserSchema.methods.removeToken = function (token) {
+  let user = this;
+
+  return user.updateOne({
+    $pull: {
+      tokens: {token}
+    }
+  })
+};
+
 UserSchema.statics.findByToken = function(token) {
   let User = this;
   let decoded;
@@ -56,18 +78,6 @@ UserSchema.statics.findByToken = function(token) {
     'tokens.access': 'auth',
   });
 }
-
-UserSchema.methods.generateAuthToken = function () {
-  let user = this;
-  let access = 'auth';
-  let token = jwt.sign({ _id: user.id, access }, 'abc123').toString();
-
-  user.tokens = user.tokens.concat([{access, token}]);
-
-  return user.save().then(() => {
-    return token;
-  });
-};
 
 UserSchema.statics.findByCredentials = function (email, password) {
   let User = this;
