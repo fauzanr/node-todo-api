@@ -1,8 +1,10 @@
 require('./config/config');
 
+const _ = require('lodash');
 const express = require('express');
 const {ObjectId} = require('mongodb');
-const _ = require('lodash');
+
+const {authenticate} = require('./middleware/authenticate');
 
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
@@ -60,6 +62,10 @@ app.post('/users', (req, res) => {
   }).then(token => {
     res.header('x-auth', token).status(201).send({user});
   }).catch(e => res.status(400).send(e));
+});
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
 });
 
 // DELETE
