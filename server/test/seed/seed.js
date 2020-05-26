@@ -38,7 +38,14 @@ const todos = [
 
 let populateUsers = done => {
   User.deleteMany({}).then(() => {
-    User.insertMany(users).then(() => done());
+    let doc = [];
+
+    users.forEach(user => {
+      let saved = new User(user).save();
+      doc.push(saved);
+    });
+
+    Promise.all(doc).then(() => done());
   });
 }
 
