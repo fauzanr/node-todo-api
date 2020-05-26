@@ -2,6 +2,7 @@ require('./config/config');
 
 const _ = require('lodash');
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const {ObjectId} = require('mongodb');
 
 
@@ -68,25 +69,17 @@ app.post('/users', (req, res) => {
   }).catch(e => res.status(400).send(e));
 });
 
-// DELETE
-app.delete('/todos/:id', (req, res) => {
-  let {id} = req.params;
+app.post('/users/login', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password']);
 
-  if(!ObjectId.isValid(id)) {
-    return res.status(404).send();
-  }
-
-  Todo.findByIdAndDelete(id).then(todo => {
-    if (!todo) {
-      return res.status(404).send();
-    }
-
-    res.send({todo})
+  User.findByCredentials(body.email, body.password).then(user => {
+    return user.generateAuthToken().then(token => {
+      res.header('x-auth', token).send(user);
+    })
   }).catch(e => res.status(400).send());
 });
 
 // PATCH
-
 app.patch('/todos/:id', (req, res) => {
   let {id} = req.params;
   let body = _.pick(req.body, ['text', 'completed']);
@@ -108,6 +101,23 @@ app.patch('/todos/:id', (req, res) => {
     }
 
     res.send({todo});
+  }).catch(e => res.status(400).send());
+});
+
+// DELETE
+app.delete('/todos/:id', (req, res) => {
+  let {id} = req.params;
+
+  if(!ObjectId.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Todo.findByIdAndDelete(id).then(todo => {
+    if (!todo) {
+      return res.status(404).send();
+    }
+
+    res.send({todo})
   }).catch(e => res.status(400).send());
 });
 
