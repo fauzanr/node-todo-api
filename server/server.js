@@ -4,10 +4,10 @@ const _ = require('lodash');
 const express = require('express');
 const {ObjectId} = require('mongodb');
 
-const {authenticate} = require('./middleware/authenticate');
 
 const {Todo} = require('./models/todo');
 const {User} = require('./models/user');
+const {authenticate} = require('./middleware/authenticate');
 
 const PORT = process.env.PORT;
 
