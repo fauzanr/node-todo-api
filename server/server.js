@@ -63,25 +63,31 @@ app.post('/todos', authenticate, (req, res) => {
   }).catch(e => res.status(400).send(e));
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
   let body = _.pick(req.body, ['email', 'password']);
   let user = new User(body);
 
-  user.save().then(() => {
-    return user.generateAuthToken();
-  }).then(token => {
+  try {
+    await user.save();
+    const token = await user.generateAuthToken();
     res.header('x-auth', token).status(201).send({user});
-  }).catch(e => res.status(400).send(e));
+  } catch (e) {
+    res.status(400).send(e);
+  }
+
 });
 
-app.post('/users/login', (req, res) => {
+app.post('/users/login', async (req, res) => {
   let body = _.pick(req.body, ['email', 'password']);
 
-  User.findByCredentials(body.email, body.password).then(user => {
-    return user.generateAuthToken().then(token => {
-      res.header('x-auth', token).send(user);
-    })
-  }).catch(e => res.status(400).send());
+  try {
+    const user = await User.findByCredentials(body.email, body.password);
+    const token = await user.generateAuthToken();
+    res.header('x-auth', token).send(user);
+  } catch (e) {
+    res.status(400).send()
+  }
+
 });
 
 // PATCH
